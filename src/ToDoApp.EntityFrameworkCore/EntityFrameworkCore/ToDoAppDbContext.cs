@@ -1,9 +1,11 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using ToDoApp.TodoItems;
 using Volo.Abp.AuditLogging.EntityFrameworkCore;
 using Volo.Abp.BackgroundJobs.EntityFrameworkCore;
 using Volo.Abp.Data;
 using Volo.Abp.DependencyInjection;
 using Volo.Abp.EntityFrameworkCore;
+using Volo.Abp.EntityFrameworkCore.Modeling;
 using Volo.Abp.FeatureManagement.EntityFrameworkCore;
 using Volo.Abp.Identity;
 using Volo.Abp.Identity.EntityFrameworkCore;
@@ -24,6 +26,7 @@ public class ToDoAppDbContext :
     ITenantManagementDbContext
 {
     /* Add DbSet properties for your Aggregate Roots / Entities here. */
+    public DbSet<TodoItem> TodoItems { get; set; }
 
     #region Entities from the modules
 
@@ -82,5 +85,13 @@ public class ToDoAppDbContext :
         //    b.ConfigureByConvention(); //auto configure for the base class props
         //    //...
         //});
+
+        builder.Entity<TodoItem>(b =>
+        {
+            b.ToTable(ToDoAppConsts.DbTablePrefix + "TodoItems", ToDoAppConsts.DbSchema);
+            b.ConfigureByConvention();
+            b.Property(x => x.Title).IsRequired().HasMaxLength(128);
+            b.Property(x => x.Description).HasMaxLength(2048);
+        });
     }
 }
