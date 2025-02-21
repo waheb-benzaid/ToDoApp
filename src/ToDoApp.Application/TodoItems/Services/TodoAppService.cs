@@ -2,10 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using ToDoApp.TodoItems.Dtos;
 using Volo.Abp.Application.Services;
 using Volo.Abp.Domain.Repositories;
 
-namespace ToDoApp.TodoItems
+namespace ToDoApp.TodoItems.Services
 {
     public class TodoAppService : ApplicationService, ITodoAppService
     {
@@ -42,7 +43,7 @@ namespace ToDoApp.TodoItems
             };
         }
 
-        public async Task<TodoItemDto> CreateAsync(CreateUpdateTodoItemDto input)
+        public async Task<TodoItemDto> CreateAsync(CreateTodoItemDto input)
         {
             var item = new TodoItem(GuidGenerator.Create(), input.Title, input.Description);
             item = await _todoItemRepository.InsertAsync(item);
@@ -55,7 +56,7 @@ namespace ToDoApp.TodoItems
             };
         }
 
-        public async Task<TodoItemDto> UpdateAsync(Guid id, CreateUpdateTodoItemDto input)
+        public async Task<TodoItemDto> UpdateAsync(Guid id, UpdateTodoItemDto input)
         {
             var item = await _todoItemRepository.GetAsync(id);
 

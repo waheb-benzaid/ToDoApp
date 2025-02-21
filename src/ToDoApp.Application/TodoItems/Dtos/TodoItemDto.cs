@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace ToDoApp.TodoItems
+namespace ToDoApp.TodoItems.Dtos
 {
     public class TodoItemDto
     {

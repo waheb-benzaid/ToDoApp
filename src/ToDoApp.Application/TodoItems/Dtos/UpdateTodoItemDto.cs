@@ -1,6 +1,6 @@
-﻿namespace ToDoApp.TodoItems
+﻿namespace ToDoApp.TodoItems.Dtos
 {
-    public class CreateUpdateTodoItemDto
+    public class UpdateTodoItemDto
     {
         public string? Title { get; set; }
         public string? Description { get; set; }
