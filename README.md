@@ -1,8 +1,49 @@
 # ToDoApp
 
-## About this solution
+A simple To-Do List API built with .NET Core and ABP Framework.
 
-This is a layered startup solution based on [Domain Driven Design (DDD)](https://abp.io/docs/latest/framework/architecture/domain-driven-design) practises. All the fundamental ABP modules are already installed. 
+## Features
+- CRUD operations for to-do items.
+- Caching for improved performance.
+- Swagger documentation.
+- Global Exception handling.
+- Docker support for containerization.
+
+## Installation
+1. Clone the repository:
+   ```bash
+        git clone https://[github.com/waheb-benzaid/ToDoApp.git]
+
+2. Navigate to the project directory:
+   ```bash
+        cd ToDoApp
+   
+3. Restore dependencies:
+   ```bash
+        dotnet restore
+4. Run the application:
+   ```bash
+        dotnet run --project ToDoApp.HttpApi.Host
+
+## Usage
+
+1. API Endpoints
+
+       GET /api/todo: Retrieve all to-do items.
+
+       GET /api/todo/{id}: Retrieve a to-do item by ID.
+
+       POST /api/todo: Create a new to-do item.
+
+       PUT /api/todo/{id}: Update an existing to-do item.
+
+       DELETE /api/todo/{id}: Delete a to-do item.
+   
+2.  Add a .gitignore File
+
+   A .gitignore file prevents unnecessary files (e.g., bin, obj, .vs, node_modules) from being tracked by Git. This keeps your repository clean and reduces its size.
+
+
 
 ### Pre-requirements
 
