@@ -1,4 +1,6 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using FluentValidation;
+using Microsoft.Extensions.DependencyInjection;
+using ToDoApp.TodoItems.Dtos;
 using ToDoApp.TodoItems.Services;
 using Volo.Abp.Account;
 using Volo.Abp.AutoMapper;
@@ -26,6 +28,8 @@ public class ToDoAppApplicationModule : AbpModule
     public override void ConfigureServices(ServiceConfigurationContext context)
     {
         context.Services.AddTransient<ITodoAppService, TodoAppService>();
+        context.Services.AddTransient<IValidator<CreateTodoItemDto>, CreateTodoItemDtoValidator>();
+        context.Services.AddTransient<IValidator<UpdateTodoItemDto>, UpdateTodoItemDtoValidator>();
 
         Configure<AbpAutoMapperOptions>(options =>
         {

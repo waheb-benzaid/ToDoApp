@@ -10,6 +10,7 @@ using Volo.Abp.Application.Services;
 using Volo.Abp.Caching;
 using Volo.Abp.Domain.Entities;
 using Volo.Abp.Domain.Repositories;
+using Volo.Abp.Validation;
 
 namespace ToDoApp.TodoItems.Services
 {
@@ -18,15 +19,18 @@ namespace ToDoApp.TodoItems.Services
         private readonly IRepository<TodoItem, Guid> _todoItemRepository;
         private readonly IDistributedCache<List<TodoItemDto>> _cache;
         private readonly ILogger<TodoAppService> _logger;
+        private readonly IObjectValidator _objectValidator;
 
         public TodoAppService(
             IRepository<TodoItem, Guid> todoItemRepository,
             IDistributedCache<List<TodoItemDto>> cache,
-            ILogger<TodoAppService> logger)
+            ILogger<TodoAppService> logger,
+            IObjectValidator objectValidator)
         {
             _todoItemRepository = todoItemRepository;
             _cache = cache;
             _logger = logger;
+            _objectValidator = objectValidator;
         }
 
         public async Task<List<TodoItemDto>> GetListAsync()
@@ -59,28 +63,21 @@ namespace ToDoApp.TodoItems.Services
 
         public async Task<TodoItemDto> GetAsync(Guid id)
         {
-            try
-            {
-                var item = await _todoItemRepository.GetAsync(id);
-                return new TodoItemDto
-                {
-                    Id = item.Id,
-                    Title = item.Title,
-                    Description = item.Description,
-                    IsCompleted = item.IsCompleted
-                };
-            }
-            catch (EntityNotFoundException)
-            {
-                _logger.LogWarning("To-do item with ID {Id} was not found.", id);
+            var item = await _todoItemRepository.GetAsync(id);
 
-                throw new UserFriendlyException("The requested to-do item was not found.");
+            if (item == null)
+            {
+                throw new EntityNotFoundException(typeof(TodoItem), id);
             }
+
+            return ObjectMapper.Map<TodoItem, TodoItemDto>(item);
         }
 
         public async Task<TodoItemDto> CreateAsync(CreateTodoItemDto input)
         {
             _logger.LogInformation("Creating a new to-do item with title: {Title}", input.Title);
+
+            await _objectValidator.ValidateAsync(input);
 
             var item = new TodoItem(GuidGenerator.Create(), input.Title, input.Description);
 
@@ -98,6 +95,11 @@ namespace ToDoApp.TodoItems.Services
             _logger.LogInformation("Updating to-do item with ID: {Id}", id);
 
             var item = await _todoItemRepository.GetAsync(id);
+
+            if (item == null)
+            {
+                throw new EntityNotFoundException(typeof(TodoItem), id);
+            }
 
             if (input.Title != null)
             {
@@ -131,15 +133,12 @@ namespace ToDoApp.TodoItems.Services
 
             if (item == null)
             {
-                _logger.LogWarning("To-do item with ID {Id} was not found.", id);
-                throw new UserFriendlyException("The to-do item with the specified ID was not found.");
+                throw new EntityNotFoundException(typeof(TodoItem), id);
             }
 
             await _todoItemRepository.DeleteAsync(id);
 
             await _cache.RemoveAsync("AllTodoItems");
-
-            _logger.LogInformation("Successfully deleted to-do item with ID: {Id}", id);
         }
     }
 }

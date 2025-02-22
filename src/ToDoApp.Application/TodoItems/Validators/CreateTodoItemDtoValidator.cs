@@ -7,6 +7,8 @@ public class CreateTodoItemDtoValidator : AbstractValidator<CreateTodoItemDto>
     {
         RuleFor(x => x.Title)
             .NotEmpty().WithMessage("Title is required.")
+            .NotNull().WithMessage("Title is required.")
+            .Must(x => !string.IsNullOrWhiteSpace(x)).WithMessage("Title is required.")
             .MaximumLength(128).WithMessage("Title must be 128 characters or less.");
 
         RuleFor(x => x.Description)

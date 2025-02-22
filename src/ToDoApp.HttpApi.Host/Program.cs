@@ -5,6 +5,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Serilog;
 using Serilog.Events;
+using ToDoApp.Exceptions;
 
 namespace ToDoApp;
 
@@ -34,6 +35,14 @@ public class Program
                 .UseSerilog();
             await builder.AddApplicationAsync<ToDoAppHttpApiHostModule>();
             var app = builder.Build();
+
+            if (app.Environment.IsDevelopment())
+            {
+                app.UseDeveloperExceptionPage();
+            }
+
+            app.UseMiddleware<GlobalExceptionHandlerMiddleware>();
+
             await app.InitializeApplicationAsync();
             await app.RunAsync();
             return 0;
